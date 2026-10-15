@@ -44,7 +44,4 @@ import Pkg; Pkg.add("StandardMessagePassingRules")
 - Tests: `make test` runs the suite as CI does, ending with the rule-coverage gate: every rule
   must be selected by some test. `make test test_args="name:rules"` selects items by tag, by
   name or by file; `make help` lists the other targets.
-- Depends on MessagePassingRulesBase, MessagePassingRulesApproximations (Probit's Gauss–Hermite
-  energy), BayesBase, ExponentialFamily, Distributions and a few numerical packages
-  (FastCholesky, MatrixCorrectionTools, SpecialFunctions, StatsFuns, LogExpFunctions,
-  DomainSets), not on ReactiveMP. Julia 1.10 or later. MIT licence.
+- Julia 1.10 or later. MIT licence.
