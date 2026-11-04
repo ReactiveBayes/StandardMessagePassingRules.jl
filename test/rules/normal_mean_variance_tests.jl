@@ -12,7 +12,8 @@
             (m = (μ = PointMass(2.0), v = PointMass(1.0)),) => NormalMeanVariance(2.0, 1.0),
             (m = (μ = NormalMeanVariance(0.0, 1.0), v = PointMass(2.0)),) => ExpectedWithLogScale(NormalMeanVariance(0.0, 3.0), 0),
             (m = (μ = NormalMeanPrecision(2.0, 0.5), v = PointMass(1.0)),) => ExpectedWithLogScale(NormalMeanVariance(2.0, 3.0), 0),
-            (m = (μ = NormalWeightedMeanPrecision(2.0, 0.5), v = PointMass(1.0)),) => ExpectedWithLogScale(NormalMeanVariance(4.0, 3.0), 0),
+            # a weighted-mean message stays in natural parameters: N(4, 3) as ξ = 4/3, w = 1/3
+            (m = (μ = NormalWeightedMeanPrecision(2.0, 0.5), v = PointMass(1.0)),) => ExpectedWithLogScale(NormalWeightedMeanPrecision(4 / 3, 1 / 3), 0),
             (q = (μ = PointMass(1.0), v = PointMass(2.0)),) => NormalMeanVariance(1.0, 2.0),
             (q = (μ = NormalMeanVariance(1.0, 2.0), v = InverseGamma(3.0, 4.0)),) => NormalMeanVariance(1.0, 4 / 3),
             (m = (μ = PointMass(-1.0),), q = (v = InverseGamma(3.0, 4.0),)) => NormalMeanVariance(-1.0, 4 / 3),
@@ -30,7 +31,7 @@ end
         cases = [
             (m = (out = PointMass(-1.0), v = PointMass(2.0)),) => NormalMeanVariance(-1.0, 2.0),
             (m = (out = NormalMeanVariance(0.0, 1.0), v = PointMass(2.0)),) => ExpectedWithLogScale(NormalMeanVariance(0.0, 3.0), 0),
-            (m = (out = NormalWeightedMeanPrecision(2.0, 0.5), v = PointMass(1.0)),) => ExpectedWithLogScale(NormalMeanVariance(4.0, 3.0), 0),
+            (m = (out = NormalWeightedMeanPrecision(2.0, 0.5), v = PointMass(1.0)),) => ExpectedWithLogScale(NormalWeightedMeanPrecision(4 / 3, 1 / 3), 0),
             (q = (out = PointMass(1.0), v = PointMass(2.0)),) => NormalMeanVariance(1.0, 2.0),
             (q = (out = NormalMeanVariance(1.0, 2.0), v = InverseGamma(3.0, 4.0)),) => NormalMeanVariance(1.0, 4 / 3),
             (m = (out = PointMass(-1.0),), q = (v = InverseGamma(3.0, 4.0),)) => NormalMeanVariance(-1.0, 4 / 3),

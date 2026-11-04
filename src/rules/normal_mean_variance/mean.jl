@@ -9,10 +9,7 @@
     node = NormalMeanVariance, target = :μ,
     args = (m[:out]::UnivariateNormalDistributionsFamily, m[:v]::PointMass),
     logscale = 0,
-    body = (args) -> begin
-        out_mean, out_var = mean_var(args.m[:out])
-        NormalMeanVariance(out_mean, out_var + mean(args.m[:v]))
-    end,
+    body = (args) -> through_noise(args.m[:out], mean(args.m[:v]), (m, v) -> ((μ, s) = mean_var(m); NormalMeanVariance(μ, s + v))),
 )
 
 @define_message_update_rule(

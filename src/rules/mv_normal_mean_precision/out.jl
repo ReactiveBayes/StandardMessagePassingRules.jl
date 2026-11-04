@@ -11,10 +11,7 @@
     node = MvNormalMeanPrecision, target = :out,
     args = (m[:μ]::MultivariateNormalDistributionsFamily, m[:Λ]::PointMass),
     logscale = 0,
-    body = (args) -> begin
-        μ, V = mean_cov(args.m[:μ])
-        MvNormalMeanCovariance(μ, V + cholinv(mean(args.m[:Λ])))
-    end,
+    body = (args) -> through_noise(args.m[:μ], cholinv(mean(args.m[:Λ])), (m, Σ) -> ((μ, V) = mean_cov(m); MvNormalMeanCovariance(μ, V + Σ))),
 )
 
 # Variational: a `q_Λ` contributes the precision E[Λ].
