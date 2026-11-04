@@ -34,8 +34,5 @@
 @define_message_update_rule(
     node = NormalMeanPrecision, target = :μ,
     args = (m[:out]::UnivariateNormalDistributionsFamily, q[:τ]::Any),
-    body = (args) -> begin
-        out_mean, out_var = mean_var(args.m[:out])
-        NormalMeanVariance(out_mean, out_var + inv(mean(args.q[:τ])))
-    end,
+    body = (args) -> through_noise(args.m[:out], inv(mean(args.q[:τ])), (m, v) -> ((μ, s) = mean_var(m); NormalMeanVariance(μ, s + v))),
 )

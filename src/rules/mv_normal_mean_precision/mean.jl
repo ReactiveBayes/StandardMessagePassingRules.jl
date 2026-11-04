@@ -38,10 +38,7 @@
 @define_message_update_rule(
     node = MvNormalMeanPrecision, target = :μ,
     args = (m[:out]::MultivariateNormalDistributionsFamily, q[:Λ]::Any),
-    body = (args) -> begin
-        μ, V = mean_cov(args.m[:out])
-        MvNormalMeanCovariance(μ, V + cholinv(mean(args.q[:Λ])))
-    end,
+    body = (args) -> through_noise(args.m[:out], cholinv(mean(args.q[:Λ])), (m, Σ) -> ((μ, V) = mean_cov(m); MvNormalMeanCovariance(μ, V + Σ))),
 )
 
 # A Wishart q_Λ = W(df, S) has E[Λ]⁻¹ = S⁻¹/df, from the factor S already holds.
@@ -49,8 +46,7 @@
     node = MvNormalMeanPrecision, target = :μ,
     args = (m[:out]::MultivariateNormalDistributionsFamily, q[:Λ]::Wishart),
     body = (args) -> begin
-        μ, V = mean_cov(args.m[:out])
         df, S = params(args.q[:Λ])
-        MvNormalMeanCovariance(μ, V + inv(S) ./ df)
+        through_noise(args.m[:out], inv(S) ./ df, (m, Σ) -> ((μ, V) = mean_cov(m); MvNormalMeanCovariance(μ, V + Σ)))
     end,
 )

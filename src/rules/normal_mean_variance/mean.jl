@@ -35,10 +35,7 @@
 @define_message_update_rule(
     node = NormalMeanVariance, target = :μ,
     args = (m[:out]::UnivariateNormalDistributionsFamily, q[:v]::Any),
-    body = (args) -> begin
-        out_mean, out_var = mean_var(args.m[:out])
-        NormalMeanVariance(out_mean, out_var + gaussian_variational_variance(args.q[:v]))
-    end,
+    body = (args) -> through_noise(args.m[:out], gaussian_variational_variance(args.q[:v]), (m, v) -> ((μ, s) = mean_var(m); NormalMeanVariance(μ, s + v))),
 )
 
 # A known variance: the message is the normal on `out` convolved with the noise, both normalised,
@@ -47,8 +44,5 @@
     node = NormalMeanVariance, target = :μ,
     args = (m[:out]::UnivariateNormalDistributionsFamily, q[:v]::PointMass),
     logscale = 0,
-    body = (args) -> begin
-        out_mean, out_var = mean_var(args.m[:out])
-        NormalMeanVariance(out_mean, out_var + mean(args.q[:v]))
-    end,
+    body = (args) -> through_noise(args.m[:out], mean(args.q[:v]), (m, v) -> ((μ, s) = mean_var(m); NormalMeanVariance(μ, s + v))),
 )

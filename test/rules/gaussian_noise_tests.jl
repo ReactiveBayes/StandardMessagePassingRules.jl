@@ -63,3 +63,38 @@
         )
     end
 end
+
+@testitem "rules:Gaussian nodes: a known noise as a marginal, improper messages through it" tags = [:rules] begin
+    # RxInfer gives a constant noise as a marginal, `q[:Σ]`: the same messages in natural parameters
+    using StandardMessagePassingRules, MessagePassingRulesTestUtils, ExponentialFamily, BayesBase, Distributions
+    using LinearAlgebra
+
+    Σ = [0.5 0.1; 0.1 0.3]
+    S = inv(Σ)
+    ξ, W = [1.0, 0.0], [2.0 0.0; 0.0 0.0]
+    A = S + W
+    expected = MvNormalWeightedMeanPrecision(S * (A \ ξ), S - S * (A \ S))
+    message = MvNormalWeightedMeanPrecision(ξ, W)
+    @test_message_update_rule(
+        node = MvNormalMeanCovariance, target = :μ,
+        cases = [(m = (out = message,), q = (Σ = PointMass(Σ),)) => expected],
+    )
+    @test_message_update_rule(
+        node = MvNormalMeanCovariance, target = :out,
+        cases = [(m = (μ = message,), q = (Σ = PointMass(Σ),)) => expected],
+    )
+    @test_message_update_rule(
+        node = MvNormalMeanPrecision, target = :μ,
+        cases = [(m = (out = message,), q = (Λ = PointMass(S),)) => expected],
+    )
+    w = -0.2
+    k = 1 + w * 2.0
+    @test_message_update_rule(
+        node = NormalMeanVariance, target = :μ,
+        cases = [(m = (out = NormalWeightedMeanPrecision(0.4, w),), q = (v = PointMass(2.0),)) => ExpectedWithLogScale(NormalWeightedMeanPrecision(0.4 / k, w / k), 0)],
+    )
+    @test_message_update_rule(
+        node = NormalMeanPrecision, target = :out,
+        cases = [(m = (μ = NormalWeightedMeanPrecision(0.4, w),), q = (τ = PointMass(0.5),)) => NormalWeightedMeanPrecision(0.4 / k, w / k)],
+    )
+end
