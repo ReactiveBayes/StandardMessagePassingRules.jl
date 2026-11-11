@@ -11,10 +11,7 @@
     node = MvNormalMeanCovariance, target = :out,
     args = (m[:μ]::MultivariateNormalDistributionsFamily, m[:Σ]::PointMass),
     logscale = 0,
-    body = (args) -> begin
-        μ, V = mean_cov(args.m[:μ])
-        MvNormalMeanCovariance(μ, V + mean(args.m[:Σ]))
-    end,
+    body = (args) -> through_noise(args.m[:μ], mean(args.m[:Σ]), (m, Σ) -> ((μ, V) = mean_cov(m); MvNormalMeanCovariance(μ, V + Σ))),
 )
 
 # Variational; a `q_Σ` contributes E[Σ⁻¹]⁻¹.
@@ -41,8 +38,5 @@
 @define_message_update_rule(
     node = MvNormalMeanCovariance, target = :out,
     args = (m[:μ]::MultivariateNormalDistributionsFamily, q[:Σ]::Any),
-    body = (args) -> begin
-        μ, V = mean_cov(args.m[:μ])
-        MvNormalMeanCovariance(μ, V + gaussian_variational_covariance(args.q[:Σ]))
-    end,
+    body = (args) -> through_noise(args.m[:μ], gaussian_variational_covariance(args.q[:Σ]), (m, Σ) -> ((μ, V) = mean_cov(m); MvNormalMeanCovariance(μ, V + Σ))),
 )

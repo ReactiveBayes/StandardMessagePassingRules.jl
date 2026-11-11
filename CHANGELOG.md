@@ -6,6 +6,19 @@ All notable changes to StandardMessagePassingRules.jl are documented here. The f
 
 ## [Unreleased]
 
+### Changed
+
+- The Gaussian nodes' belief-propagation rules between their two Gaussian edges, with a known
+  noise (`NormalMeanVariance`, `NormalMeanPrecision`, `MvNormalMeanCovariance` and
+  `MvNormalMeanPrecision`, towards `μ` and `out`), take a message in weighted-mean form in
+  natural parameters: `W' = (I + W Σ)⁻¹ W`, `ξ' = (I + W Σ)⁻¹ ξ`, an `(Mv)NormalWeightedMeanPrecision`.
+  Such a message may be improper: a site of cavity propagation (RxInfer's
+  `LaplacePropagation()` and `ExpectationPropagation()`) may have a singular or indefinite
+  precision, which the rules now propagate exactly; through its moments, an indefinite precision
+  was silently replaced by a positive definite one. Other messages go as before. The same holds
+  for the rules that take the noise as a marginal, `q[:v]`, `q[:τ]`, `q[:Σ]` or `q[:Λ]`, as
+  RxInfer gives a constant one.
+
 ## [1.0.0] - 2026-10-12
 
 The first release: the standard nodes (the distributions, arithmetic, logic, the mixtures and Probit), developed in the
