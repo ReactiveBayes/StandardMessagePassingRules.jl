@@ -6,6 +6,8 @@ All notable changes to StandardMessagePassingRules.jl are documented here. The f
 
 ## [Unreleased]
 
+The changes below are to be released as 1.1.0.
+
 ### Changed
 
 - The Gaussian nodes' belief-propagation rules between their two Gaussian edges, with a known
