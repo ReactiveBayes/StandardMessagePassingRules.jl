@@ -10,16 +10,16 @@ The changes below are to be released as 1.1.0.
 
 ### Changed
 
-- The Gaussian nodes' belief-propagation rules between their two Gaussian edges, with a known
-  noise (`NormalMeanVariance`, `NormalMeanPrecision`, `MvNormalMeanCovariance` and
-  `MvNormalMeanPrecision`, towards `μ` and `out`), take a message in weighted-mean form in
-  natural parameters: `W' = (I + W Σ)⁻¹ W`, `ξ' = (I + W Σ)⁻¹ ξ`, an `(Mv)NormalWeightedMeanPrecision`.
-  Such a message may be improper: a site of cavity propagation (RxInfer's
-  `LaplacePropagation()` and `ExpectationPropagation()`) may have a singular or indefinite
-  precision, which the rules now propagate exactly; through its moments, an indefinite precision
-  was silently replaced by a positive definite one. Other messages go as before. The same holds
-  for the rules that take the noise as a marginal, `q[:v]`, `q[:τ]`, `q[:Σ]` or `q[:Λ]`, as
-  RxInfer gives a constant one.
+- The belief-propagation rules of `NormalMeanVariance`, `NormalMeanPrecision`,
+  `MvNormalMeanCovariance` and `MvNormalMeanPrecision` towards `μ` and `out`, with a known
+  noise, compute with a message in weighted-mean form, an `(Mv)NormalWeightedMeanPrecision`, in
+  natural parameters: `W' = (I + W Σ)⁻¹ W` and `ξ' = (I + W Σ)⁻¹ ξ`. Such a message may be
+  improper. For example, a site of cavity propagation (RxInfer's `LaplacePropagation()` and
+  `ExpectationPropagation()`) may have a singular or indefinite precision. The rules now
+  propagate it exactly. Before, they went through its moments, which silently replaced an
+  indefinite precision with a positive definite one. Other messages are handled as before. The
+  same applies to the rules that take the noise as a marginal, `q[:v]`, `q[:τ]`, `q[:Σ]` or
+  `q[:Λ]`, since RxInfer passes a constant noise as a marginal.
 
 ## [1.0.0] - 2026-10-12
 
